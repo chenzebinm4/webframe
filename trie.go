@@ -121,15 +121,20 @@ func (tree *Tree) AddRouter(uri string, handler ControllerHandler) error {
 
 	segments := strings.Split(uri, "/")
 
-	for idx, segment := range segments {
+	for index, segment := range segments {
+
+		// 最终进入Node segment的字段
 		if !isWildSegment(segment) {
 			segment = strings.ToUpper(segment)
 		}
-		isLast := idx == len(segment)-1
+		isLast := index == len(segments)-1
 
-		var objNode *node
+		var objNode *node // 标记是否有合适的子节点
+
 		childNodes := n.filterChildNodes(segment)
+		// 如果有匹配的子节点
 		if len(childNodes) > 0 {
+			// 如果有segment相同的子节点，则选择这个子节点
 			for _, childNode := range childNodes {
 				if childNode.segment == segment {
 					objNode = childNode
@@ -139,6 +144,7 @@ func (tree *Tree) AddRouter(uri string, handler ControllerHandler) error {
 		}
 
 		if objNode == nil {
+			// 创建一个当前node的节点
 			childNode := newNode()
 			childNode.segment = segment
 			if isLast {
